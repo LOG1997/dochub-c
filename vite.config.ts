@@ -16,16 +16,23 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
     }),
   ],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: '@import "./src/assets/style/main.scss";',
+      },
+    },
+  },
   server: {
     host: "localhost",
     port: 8080,
     proxy: {
       "/api": {
-        target: "http://localhost:4000",
+        target: "https://mock.apifox.cn/m1/1705450-0-default",
         // 是否跨域
         changeOrigin: true,
         // 路径重写
-        // rewrite: (path) => path.replace(/^\/api/, '')
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },
