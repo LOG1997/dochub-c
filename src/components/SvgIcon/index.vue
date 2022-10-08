@@ -27,11 +27,13 @@ const symbolId = computed(() => `#${props.prefix}-${props.name}`);
     :width="props.size"
     :height="props.size"
   >
-    <use :xlink:href="symbolId" :fill="props.color" />
+    <use :xlink:href="symbolId" />
   </svg>
 </template>
 <style scoped>
 .svg-icon {
-  color: blue;
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
 }
 </style>

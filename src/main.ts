@@ -17,4 +17,6 @@ import { createPinia } from "pinia";
 import piniaPluginPersist from "pinia-plugin-persist";
 const pinia = createPinia();
 pinia.use(piniaPluginPersist);
-app.use(pinia).use(router).component("svg-icon", svgIcon).mount("#app");
+// svg全局组件
+app.component("svg-icon", svgIcon);
+app.use(pinia).use(router).mount("#app");

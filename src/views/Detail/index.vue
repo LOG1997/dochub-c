@@ -227,6 +227,7 @@ const featchContent = () => {
 .content {
   margin-left: 300px;
   width: 60%;
+  min-width: 800px;
 }
 </style>
 <style>
