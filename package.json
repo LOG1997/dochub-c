@@ -8,7 +8,8 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "lint": "eslint --ext .ts,tsx,vue src/** --no-error-on-unmatched-pattern --quiet",
-    "lint:fix": "eslint --ext .ts,tsx,vue src/** --no-error-on-unmatched-pattern --fix"
+    "lint:fix": "eslint --ext .ts,tsx,vue src/** --no-error-on-unmatched-pattern --fix",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.9",
@@ -38,13 +39,14 @@
     "@vue/eslint-config-typescript": "^7.0.0",
     "@vuedx/typescript-plugin-vue": "^0.6.3",
     "autoprefixer": "^10.4.12",
-    "eslint": "^7.20.0",
-    "eslint-plugin-prettier": "^3.3.1",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-vue": "^7.6.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "postcss": "^8.4.17",
-    "prettier": "^2.2.1",
+    "prettier": "^2.7.1",
     "sass-loader": "^13.0.2",
     "svg-sprite-loader": "^6.0.11",
     "tailwindcss": "^3.1.8",
