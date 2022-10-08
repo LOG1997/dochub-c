@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import { getAllDoc } from "@/api/homePage/index";
 import { storeToRefs } from "pinia";
 import { useStore } from "@/store/index";
+import { proDataType } from "@/types/homePage";
 const store = useStore();
 onMounted(() => {
   featchAllDoc();
@@ -19,15 +20,18 @@ const featchAllDoc = () => {
 };
 // 路由跳转
 const router = useRouter();
-const skip = (path: string, pro: object) => {
+const skip = (path: string, pro: proDataType) => {
   console.log("pro:", pro);
-  store.setProjectId(pro);
-  router.push(path);
+  store.setProjectObj(pro);
+  router.push({
+    path: path,
+    query: { projectId: pro.id, categoryId: pro.categoryId },
+  });
 };
 </script>
 
 <template>
-  <div class="homePage h-auto">
+  <div class="homePage h-auto min-w-full">
     <div class="banner w-full h-80">
       <p class="text-white text-4xl pt-20">文档中心</p>
     </div>
@@ -68,6 +72,9 @@ const skip = (path: string, pro: object) => {
   background-size: 300%;
   animation: ani 30s linear infinite;
   border: none;
+}
+.docList {
+  min-width: 1280px;
 }
 @keyframes ani {
   0% {

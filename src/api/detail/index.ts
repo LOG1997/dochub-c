@@ -7,3 +7,19 @@ export function getTreeList(params: any) {
     params,
   });
 }
+
+export function getVersionList(params: any) {
+  return request({
+    url: "/portal/getVersionList",
+    method: "get",
+    params,
+  });
+}
+
+export function getContent(params: any) {
+  return request({
+    url: "/portal/getContent",
+    method: "get",
+    params,
+  });
+}

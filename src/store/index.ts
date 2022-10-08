@@ -6,12 +6,24 @@ export const useStore = defineStore("main", {
   // 推荐使用 完整类型推断的箭头函数
   state: () => {
     return {
+      // categoryObj: {},
       projectObj: {},
     };
   },
+  getters: {
+    getProjectObj(state) {
+      return state.projectObj;
+    },
+    // getCategoryObj(state) {
+    //   return state.categoryObj;
+    // },
+  },
   actions: {
-    setProjectId(data: object) {
+    setProjectObj(data: object) {
       this.projectObj = data;
     },
+    // setCategoryObj(data: object) {
+    //   this.categoryObj = data;
+    // },
   },
 });

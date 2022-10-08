@@ -19,6 +19,7 @@ import Header from "@/components/Header/index.vue";
   padding: 0;
   margin: 0;
   background-color: #f9f9f9;
+  z-index: 10000;
 }
 .dark .el-header {
   padding: 0;
@@ -30,7 +31,13 @@ import Header from "@/components/Header/index.vue";
   margin-top: 60px;
   overflow-y: hidden;
 }
+.dark .el-main {
+  background-color: #35353a;
+}
 .el-footer {
   padding: 0;
+}
+.dark .el-footer {
+  background-color: #2a2a46;
 }
 </style>
