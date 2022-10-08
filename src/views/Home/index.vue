@@ -12,7 +12,6 @@ onMounted(() => {
 // 首页数据
 let docAll = ref();
 const featchAllDoc = () => {
-  console.log("asas");
   getAllDoc({}).then((res: any) => {
     docAll.value = res.data.data;
     console.log(":", docAll);
@@ -21,6 +20,13 @@ const featchAllDoc = () => {
 // 路由跳转
 const router = useRouter();
 const skip = (path: string, pro: proDataType) => {
+  store.setCategoryObj(docAll.value[0]);
+  for (let i = 0; i < docAll.value.length; i++) {
+    if (pro.categoryId == docAll.value[i].id) {
+      store.setCategoryObj(docAll.value[i]);
+      break;
+    }
+  }
   console.log("pro:", pro);
   store.setProjectObj(pro);
   router.push({

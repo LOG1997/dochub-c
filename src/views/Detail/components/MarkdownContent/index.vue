@@ -29,7 +29,8 @@ watch(
   () => props.content,
   () => {
     markdownToHtml.value = marked(props.content || "");
-    console.log("markdownToHtml:", markdownToHtml.value);
+    markdownToHtml.value = marked("# 2");
+    // console.log("markdownToHtml:", markdownToHtml.value);
   }
 );
 </script>

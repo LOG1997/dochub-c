@@ -1,22 +1,32 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch } from "vue";
+import { ref, reactive, onMounted, watch, nextTick } from "vue";
 import { CaretBottom } from "@element-plus/icons-vue";
 import { getTreeList, getVersionList, getContent } from "@/api/detail/index";
 import { treeDataType } from "@/types/detail";
+import {
+  proDataType,
+  categoryDataType,
+  versionDataType,
+} from "@/types/homePage";
 import { transTree } from "@/utils/index";
 import { getAllDoc } from "@/api/homePage/index";
 import SwitchProject from "./components/SwitchProject/index.vue";
 import MarkdownToHtml from "./components/MarkdownContent/index.vue";
 import { useStore } from "@/store/index";
-import router from "@/router";
-const store = useStore();
+import PageOPtions from "./components/PageOption/index.vue";
+import { useRouter, useRoute } from "vue-router";
 
+const store = useStore();
+const router = useRouter();
+const route = useRoute();
 onMounted(() => {
   featchTreeData();
   featchVersionList();
-  featchContent();
+  // featchContent();
   // featchAllDoc();
 });
+// 初始化
+let routeQuery = reactive({});
 // 项目信息
 const curProject = ref();
 const curCategory = ref();
@@ -25,7 +35,7 @@ if (store.getProjectObj) {
   curProject.value = store.getProjectObj;
 } else {
   for (let i = 0; i < allDoc.value.length; i++) {
-    if (allDoc.value[i].id == router.currentRoute.value.query.categoryId) {
+    if (allDoc.value[i].id == route.query.categoryId) {
       curCategory.value = allDoc.value[i];
     }
   }
@@ -41,10 +51,16 @@ let popoverProjectVisible = ref(false);
 const mouseEnter = () => {
   menuHide.value = false;
 };
-const handleProject = (projectItem: object) => {
+const handleProject = (projectItem: proDataType) => {
   popoverProjectVisible.value = false;
   console.log("pro", projectItem);
   curProject.value = projectItem;
+  store.setProjectObj(projectItem);
+  routeQuery = { ...route.query, projectId: curProject.value.id };
+  router.push({
+    path: "/detail",
+    query: { ...routeQuery },
+  });
 };
 // 切换版本
 const versionList = ref();
@@ -53,25 +69,59 @@ let popoverVersionVisible = ref(false);
 const featchVersionList = () => {
   getVersionList({}).then((res) => {
     versionList.value = res.data.data;
-    for (let i = 0; i < versionList.value.length; i++) {
-      if (versionList.value[i].display == "DEFAULT_DISPLAY") {
-        defaultVersionObj.value = versionList.value[i];
+    if (store.getVersionObj) {
+      defaultVersionObj.value = store.getVersionObj;
+    } else {
+      for (let i = 0; i < versionList.value.length; i++) {
+        if (versionList.value[i].display == "DEFAULT_DISPLAY") {
+          defaultVersionObj.value = versionList.value[i];
+          store.setVersionObj(defaultVersionObj.value);
+
+          // route.query.versionId = defaultVersionObj.value.id;
+        }
       }
     }
-    console.log("defversi:", defaultVersionObj);
+    routeQuery = {
+      ...route.query,
+      versionId: defaultVersionObj.value.id,
+    };
+    router.push({
+      path: "/detail",
+      query: { ...routeQuery },
+    });
   });
 };
-const handleVersion = (versionItem: object) => {
+const handleVersion = (versionItem: versionDataType) => {
   console.log("versionItem:", versionItem);
   defaultVersionObj.value = versionItem;
+  store.setVersionObj(versionItem);
+  routeQuery = { ...route.query, versionId: defaultVersionObj.value.id };
+  router.push({
+    path: "/detail",
+    query: { ...routeQuery },
+  });
   popoverVersionVisible.value = false;
 };
 // 获取树形结构数据
 let treeData = ref();
+const treeDiv = ref();
 const featchTreeData = () => {
   getTreeList({}).then((res) => {
-    console.log(res);
+    console.log("raw:", res.data.data);
+    const rawData = reactive<treeDataType[]>(
+      res.data.data.documentDirectoryList
+    );
     treeData.value = transTree(res.data.data.documentDirectoryList);
+    routeQuery = { ...route.query, docId: treeData.value[0].id };
+    router.push({
+      path: "/detail",
+      query: { ...routeQuery },
+    });
+    console.log("object :>> ", treeData.value);
+    console.log("rawData:", rawData);
+    nextTick(() => {
+      treeDiv.value.setCurrentKey(treeData.value[0].id);
+    });
   });
 };
 const defaultProps = {
@@ -80,7 +130,11 @@ const defaultProps = {
 };
 // 点击树形图节点
 const handleNodeClick = (data: treeDataType) => {
-  console.log(data);
+  routeQuery = { ...route.query, docId: data.id };
+  router.push({
+    path: "/detail",
+    query: { ...routeQuery },
+  });
 };
 // 监听屏幕宽度
 let clientWidth = ref(document.body.clientWidth);
@@ -89,14 +143,33 @@ window.onresize = () => {
     clientWidth.value = document.body.clientWidth;
   })();
 };
+// 页尾翻页
+
+let pageOptions = reactive([{}, {}, {}]);
+const pageTurn = (docId: string | number) => {
+  for (let i = 0; i < treeData.value.length; i++) {
+    if()
+  }
+};
+
 // 获取文档内容
 let markdownContent = ref("");
-const featchContent = () => {
-  getContent({}).then((res) => {
+const featchContent = (docId: string | number) => {
+  getContent({ id: docId }).then((res) => {
     console.log("contsne:", res);
     markdownContent.value = res.data.data.content;
   });
 };
+watch(
+  () => route.query.docId,
+  (newVal, oldVal) => {
+    console.log("路由变化：", newVal, typeof newVal);
+    featchContent(newVal as string);
+  },
+  {
+    immediate: true,
+  }
+);
 </script>
 
 <template>
@@ -150,8 +223,7 @@ const featchContent = () => {
         </div>
         <el-popover
           placement="right-start"
-          :width="300"
-          @show="featchAllDoc"
+          :width="400"
           title="切换版本"
           :show-arrow="false"
           v-model:visible="popoverVersionVisible"
@@ -181,15 +253,20 @@ const featchContent = () => {
       <el-divider />
       <el-tree
         class="el-tree"
+        ref="treeDiv"
         :data="treeData"
         :props="defaultProps"
+        node-key="id"
         accordion
         highlight-current
         @node-click="handleNodeClick"
       />
     </div>
     <div class="content left-10">
-      <MarkdownToHtml :content="markdownContent"></MarkdownToHtml>
+      <div>
+        <MarkdownToHtml :content="markdownContent"></MarkdownToHtml>
+        <PageOPtions class="h-16"></PageOPtions>
+      </div>
     </div>
   </div>
 </template>

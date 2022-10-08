@@ -32,7 +32,7 @@ axios.interceptors.response.use(
   (response) => {
     const res = response.data;
     if (response.status == 200) {
-      console.log("axios响应：", response, res);
+      // console.log("axios响应：", response, res);
       switch (+res.code) {
         case 10000:
           // console.log("codedddd:", res);
